@@ -39,6 +39,7 @@ public class Game : MonoBehaviour {
 				GUI.Box(new Rect(0f, 0f, halfScreenWidth, halfScreenHeight), "GAME OVER");
 				if(GUI.Button(new Rect((halfScreenWidth >> 1) - 50f, halfScreenHeight - 30f, 100f, 25f), "Try Again?")) {
 					Application.LoadLevel(Application.loadedLevel);
+					Time.timeScale = 1f;
 				}
 			GUI.EndGroup();
 		}
@@ -51,6 +52,7 @@ public class Game : MonoBehaviour {
 			GUI.Box(new Rect(0f, 0f, halfScreenWidth, halfScreenHeight), "YOU WON!");
 			if(GUI.Button(new Rect((halfScreenWidth >> 1) - 50f, halfScreenHeight - 30f, 100f, 25f), "Play Again?")) {
 				Application.LoadLevel(Application.loadedLevel);
+				Time.timeScale = 1f;
 			}
 			GUI.EndGroup();
 		}
