@@ -8,11 +8,16 @@ public class CameraController : MonoBehaviour {
 
 	public float speed = 10;
 
+	public float halfHeight;
+	public float halfWidth;
+
 	public bool IsLocked { get; private set; }
 
 	// Use this for initialization
 	void Start () {
 		IsLocked = false;
+		halfHeight = camera.orthographicSize;
+		halfWidth = halfHeight * camera.aspect;
 	}
 	
 	// Update is called once per frame
@@ -26,7 +31,8 @@ public class CameraController : MonoBehaviour {
 
 		var targetX = player.transform.position.x - 0.1f;
 		// clamp to level end
-		targetX = Mathf.Clamp(targetX, 0f, level.bounds.extents.x);
+		targetX = Mathf.Clamp(targetX, 0f, (level.bounds.center.x + level.bounds.extents.x - halfWidth));
+	
 		pos.x += (targetX - pos.x) * Time.deltaTime * speed;
 
 		camera.transform.position = pos;
