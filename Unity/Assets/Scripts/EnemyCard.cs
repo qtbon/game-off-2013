@@ -16,6 +16,7 @@ public class EnemyCard : Character {
 		Events.InvokeCharacterCreated(this, null);
 		mover.target = Player.Instance.transform;
 		StartCoroutine(IdleBlockAndAttack());
+		mover.GoalBuffer = 0.12f;
 	}
 	
 	// Update is called once per frame

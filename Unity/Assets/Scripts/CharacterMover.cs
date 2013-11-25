@@ -6,38 +6,50 @@ public class CharacterMover : MonoBehaviour
 {
 	public float speed = 2f;
 	public float jumpHeight = 0.3f;
+	// Length of time in air, in seconds
+	public float jumpTime = 0.25f;
 	public Transform target = null;
+	public float GoalBuffer { get; set; }
 
 	private float xScale;
 	private Animator animator;
-
-	// Used for jumping, knockdown, etc.
-	private Vector2 velocityOffset;
 	
 	private bool shouldJump = false;
+	public bool IsJumping { get;private set; }
+
+	private Vector3 jumpRoot;
 
 	// Use this for initialization
 	void Start () {
 		animator = GetComponent<Animator>();
 		xScale = transform.localScale.x;
+
+		SetJumpTime(jumpTime);
+	}
+
+	// Converts seconds to time.deltatime multiplier
+	public void SetJumpTime(float jumpTime) {
+		this.jumpTime = jumpTime;
 	}
 	
 	public void Move() {
 		if(target) {
-			var baseVelocity = target.position - transform.position;
-			
-			if(baseVelocity.sqrMagnitude > 0.12f) {
+			var baseVelocity = !IsJumping ? target.position - transform.position : target.position - jumpRoot;
+
+			if(baseVelocity.sqrMagnitude > GoalBuffer) {
 				Move(baseVelocity.normalized);
 			}
 			else {
 				Move(Vector2.zero);
 			}
 		}
+		else {
+			Move(Vector2.zero);
+		}
 	}
 
 	public void Move(Vector2 baseVelocity) {
 		var velocity = baseVelocity * speed;
-		velocity += velocityOffset;
 		
 		rigidbody2D.velocity = velocity;
 
@@ -58,25 +70,32 @@ public class CharacterMover : MonoBehaviour
 	}
 
 	IEnumerator Jumping() {
-		shouldJump = true;
+		IsJumping = shouldJump = true;
 		animator.SetBool("isJumping", true);
 
-		var jumpRoot = transform.position;
+		jumpRoot = transform.position;
 		var jumpOffset = Vector3.zero;
 
 		var t = 0f;
-		velocityOffset = Vector2.zero;
-		while((t += Time.deltaTime * 4f) < Mathf.PI) {
-			// velocityOffset.y = Mathf.Sign(Mathf.Lerp(1, -1, t)) * Time.deltaTime * jumpForce;
-			jumpRoot += new Vector3(rigidbody2D.velocity.x, rigidbody2D.velocity.y) * Time.deltaTime;
-			jumpOffset.y = Mathf.Sin(t) * jumpHeight;
-			transform.position = jumpRoot + jumpOffset;
-			yield return null;
-		}
+		// Calculate period based off of jump time
 
-		shouldJump = false;
-		velocityOffset = Vector2.zero;
+		while((t += Time.deltaTime) < jumpTime) {
+			DoJump(ref jumpRoot, ref jumpOffset, t);
+			yield return new WaitForFixedUpdate();
+		}
+		DoJump(ref jumpRoot, ref jumpOffset, jumpTime);
+
+		IsJumping = shouldJump = false;
 		animator.SetBool("isJumping", false);
+	}
+
+	void DoJump(ref Vector3 jumpRoot, ref Vector3 jumpOffset, float t) {
+		// velocityOffset.y = Mathf.Sign(Mathf.Lerp(1, -1, t)) * Time.deltaTime * jumpForce;
+		jumpRoot += new Vector3(rigidbody2D.velocity.x, rigidbody2D.velocity.y) * Time.fixedDeltaTime;
+		Debug.DrawLine(jumpRoot - Vector3.right * 0.25f, jumpRoot + Vector3.right * 0.25f);
+		jumpOffset.y = Mathf.Sin(t * (1/jumpTime) * Mathf.PI) * jumpHeight;
+		transform.position = jumpRoot + jumpOffset;
+	
 	}
 }
 

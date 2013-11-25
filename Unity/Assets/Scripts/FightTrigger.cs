@@ -16,7 +16,6 @@ public class FightTrigger : MonoBehaviour {
 	}
 
 	void Update() {
-		Debug.Log(GetInstanceID() + " " + numDeadEnemies + enemies.Count);
 		if(!FightOver && numDeadEnemies == enemies.Count) {
 			Camera.main.GetComponent<CameraController>().Unlock();
 			Events.CharacterDied -= HandleCharacterDied;
