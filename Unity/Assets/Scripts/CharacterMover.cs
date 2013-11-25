@@ -2,11 +2,10 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent (typeof(Rigidbody2D))]
-[RequireComponent (typeof(Rigidbody2D))]
 public class CharacterMover : MonoBehaviour
 {
 	public float speed = 2f;
-	public float jumpForce = 75f;
+	public float jumpHeight = 0.3f;
 	public Transform target = null;
 
 	private float xScale;
@@ -61,12 +60,20 @@ public class CharacterMover : MonoBehaviour
 	IEnumerator Jumping() {
 		shouldJump = true;
 		animator.SetBool("isJumping", true);
+
+		var jumpRoot = transform.position;
+		var jumpOffset = Vector3.zero;
+
 		var t = 0f;
 		velocityOffset = Vector2.zero;
-		while((t += Time.deltaTime * 2f) < 1f) {
-			velocityOffset.y = Mathf.Sign(Mathf.Lerp(1, -1, t)) * Time.deltaTime * jumpForce;
+		while((t += Time.deltaTime * 4f) < Mathf.PI) {
+			// velocityOffset.y = Mathf.Sign(Mathf.Lerp(1, -1, t)) * Time.deltaTime * jumpForce;
+			jumpRoot += new Vector3(rigidbody2D.velocity.x, rigidbody2D.velocity.y) * Time.deltaTime;
+			jumpOffset.y = Mathf.Sin(t) * jumpHeight;
+			transform.position = jumpRoot + jumpOffset;
 			yield return null;
 		}
+
 		shouldJump = false;
 		velocityOffset = Vector2.zero;
 		animator.SetBool("isJumping", false);

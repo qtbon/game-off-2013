@@ -19,7 +19,7 @@ public class EnemyCard : Character {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 		if(!HasAggro) {
 			return;
 		}

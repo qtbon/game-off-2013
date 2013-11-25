@@ -25,33 +25,34 @@ public class Player : Character {
 			IsBlocking = false;
 		}
 
-		var velocity = Vector2.zero;
-
-		if(Input.GetKey(KeyCode.RightArrow)) {
-			velocity.x = 1f;
-		}
-
-		if(Input.GetKey(KeyCode.LeftArrow)) {
-			velocity.x = -1f;
-		}
-
-		if(Input.GetKey(KeyCode.UpArrow)) {
-			velocity.y = 1f;
-		}
-
-		if(Input.GetKey(KeyCode.DownArrow)) {
-			velocity.y = -1f;
-		}
-
-		if(IsBlocking) {
-			velocity = Vector2.zero;
-		}
-
-		mover.Move(velocity.normalized);
-
 		if(Input.GetKeyDown(KeyCode.Z)) {
 			mover.Jump();
 		}
+	}
+
+	void FixedUpdate() {
+		var velocity = Vector2.zero;
+		if(Input.GetKey(KeyCode.RightArrow)) {
+			velocity.x = 1f;
+		}
+		
+		if(Input.GetKey(KeyCode.LeftArrow)) {
+			velocity.x = -1f;
+		}
+		
+		if(Input.GetKey(KeyCode.UpArrow)) {
+			velocity.y = 1f;
+		}
+		
+		if(Input.GetKey(KeyCode.DownArrow)) {
+			velocity.y = -1f;
+		}
+		
+		if(IsBlocking) {
+			velocity = Vector2.zero;
+		}
+		
+		mover.Move(velocity.normalized);
 	}
 
 	void OnGUI() {
