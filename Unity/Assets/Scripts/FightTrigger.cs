@@ -6,7 +6,7 @@ public class FightTrigger : MonoBehaviour {
 
 	public bool HasTriggered { get; private set; }
 	public bool FightOver { get; private set; }
-	public List<EnemyCard> enemies = new List<EnemyCard>();
+	public List<Actor> enemies = new List<Actor>();
 
 	private uint numDeadEnemies = 0;
 
@@ -16,7 +16,7 @@ public class FightTrigger : MonoBehaviour {
 	}
 
 	void Update() {
-		if(!FightOver && numDeadEnemies == enemies.Count) {
+		if(!FightOver && numDeadEnemies >= enemies.Count) {
 			Camera.main.GetComponent<CameraController>().Unlock();
 			Events.CharacterDied -= HandleCharacterDied;
 			FightOver = true;
@@ -39,7 +39,7 @@ public class FightTrigger : MonoBehaviour {
 			return;
 		
 		// Aggrevate enemies
-		enemies.ForEach(e => e.HasAggro = true);
+		enemies.ForEach(e => { var enemy = e as Enemy; if(enemy) { enemy.HasAggro = true; } } );
 
 		// Lock screen
 		Camera.main.GetComponent<CameraController>().Lock();
@@ -51,11 +51,10 @@ public class FightTrigger : MonoBehaviour {
 
 	void HandleCharacterDied (object sender, System.EventArgs e) {
 		var characterHealth = sender as CharacterHealth;
-		var character = characterHealth.GetComponent<EnemyCard>();
+		var character = characterHealth.GetComponent<Actor>();
 		if(!enemies.Contains(character)) {
 			return;
 		}
-
 		++numDeadEnemies;
 	}
 }

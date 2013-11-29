@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
-/// Sorts list of characters to give sprite renderers appearance of depth
+/// Sorts list of actors to give sprite renderers appearance of depth
 /// </summary>
-public class CharacterSorter : MonoBehaviour {
+public class ActorSorter : MonoBehaviour {
 
-	public List<Transform> characters;
+	public List<Transform> actors;
 
 	void Start() {
 
@@ -24,7 +24,7 @@ public class CharacterSorter : MonoBehaviour {
 	}
 
 	void HandleCharacterCreated (object sender, System.EventArgs e) {
-		characters.Add((sender as MonoBehaviour).transform);
+		actors.Add((sender as MonoBehaviour).transform);
 	}
 
 	// Update is called once per frame
@@ -32,9 +32,9 @@ public class CharacterSorter : MonoBehaviour {
 		while(true) {
 			yield return new WaitForSeconds(0.2f);
 			// Remove any items that have been destroyed
-			characters.RemoveAll(c => c == null);
+			actors.RemoveAll(c => c == null);
 			// Sort
-			Transform[] sorted = characters.OrderByDescending(c => c.position.y).ToArray();
+			Transform[] sorted = actors.OrderByDescending(c => c.position.y).ToArray();
 			for(int i=0; i<sorted.Length; ++i) {
 				(sorted[i].renderer as SpriteRenderer).sortingOrder = i;
 			}

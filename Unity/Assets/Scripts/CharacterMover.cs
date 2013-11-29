@@ -19,8 +19,7 @@ public class CharacterMover : MonoBehaviour
 
 	private Vector3 jumpRoot;
 
-	// Use this for initialization
-	void Start () {
+	void Awake () {
 		animator = GetComponent<Animator>();
 		xScale = transform.localScale.x;
 

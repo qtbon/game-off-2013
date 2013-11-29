@@ -2,9 +2,7 @@
 using System.Collections;
 
 [RequireComponent(typeof(Animator))]
-public class EnemyCard : Character {
-
-	public bool HasAggro { get; set; }
+public class EnemyCard : Enemy {
 
 	void Awake() {
 		HasAggro = false;
@@ -13,7 +11,7 @@ public class EnemyCard : Character {
 	// Use this for initialization
 	protected override void Start () {
 		base.Start();
-		Events.InvokeCharacterCreated(this, null);
+		Events.InvokeActorCreated(this, null);
 		mover.target = Player.Instance.transform;
 		StartCoroutine(IdleBlockAndAttack());
 		mover.GoalBuffer = 0.12f;

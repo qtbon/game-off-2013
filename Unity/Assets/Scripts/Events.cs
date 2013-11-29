@@ -10,8 +10,13 @@ public class Events {
 		CharacterDied(sender, e);
 	}  
 
-	public static event EventHandler CharacterCreated = delegate {};
-	public static void InvokeCharacterCreated(object sender, EventArgs e) {
-		CharacterCreated(sender, e);
+	public static event EventHandler ActorCreated = delegate {};
+	public static void InvokeActorCreated(object sender, EventArgs e) {
+		ActorCreated(sender, e);
+	}
+
+	public static event EventHandler ActorDestroyed = delegate {};
+	public static void InvokeActorDestroyed(object sender, EventArgs e) {
+		ActorCreated(sender, e);
 	}
 }

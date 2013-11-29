@@ -3,7 +3,7 @@ using System.Collections;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterMover))]
-public class Character : MonoBehaviour {
+public class Character : Actor {
 	
 	protected  Animator animator;
 	protected  CharacterMover mover;

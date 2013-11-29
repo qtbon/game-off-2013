@@ -1,12 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BigBossCard : Character {
+[RequireComponent (typeof(CharacterAttacker))]
+public class BigBossCard : Enemy {
 
 	private float moverSpeed;
 
 	private Transform player;
 	private Transform target;
+
+	public GameObject debrisPrefab;
+
+	private int attackCount = 0;
+	public int debrisInterval = 3;
+
+	private CharacterAttacker jumpAttacker;
+
+	protected void Awake() {
+		jumpAttacker = GetComponent<CharacterAttacker>();
+	}
 
 	// Use this for initialization
 	protected override void Start () {
@@ -21,12 +33,20 @@ public class BigBossCard : Character {
 		var targetObj = new GameObject("Boss Target");
 		target = targetObj.transform;
 
-		StartCoroutine(JumpAttack());
+		StartCoroutine(WaitForAggro());
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 		mover.Move();
+	}
+
+	IEnumerator WaitForAggro() {
+		while(!HasAggro) {
+			yield return null;
+		}
+
+		StartCoroutine(JumpAttack());
 	}
 
 	IEnumerator JumpAttack() {
@@ -44,7 +64,18 @@ public class BigBossCard : Character {
 		mover.Jump();
 
 		while(mover.IsJumping) {
+			jumpAttacker.Attack();
 			yield return null;
+		}
+
+		// Randomly spawn debris
+		if(++attackCount % debrisInterval == 0) {
+			// Send debris somewhere between boss and player
+			var debrisPosition = Vector3.Lerp(transform.position, player.position, Random.Range(0.25f, 0.75f));
+			var debrisObj = Instantiate(debrisPrefab, debrisPosition + Vector3.up * 2f, Quaternion.Euler(new Vector3(0f, 0f, Random.Range(0f, 360f))) ) as GameObject;
+			var debris = debrisObj.GetComponent<BossDebris>();
+
+			debris.GoalPosition = debrisPosition;
 		}
 
 		mover.target = null;
